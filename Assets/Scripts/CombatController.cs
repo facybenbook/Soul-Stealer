@@ -15,6 +15,14 @@ public class CombatController : MonoBehaviour {
 
 	public int strength;
 
+	bool canBlock;
+	public float maxBlockingTime;
+	float blockingTime;
+	public float maxBlockingDelay;
+	float blockingDelay;
+	public float blockingRefreshRate;
+	public float blockingPenalty;
+
 	public float knockbackForce;
 
 	[SerializeField]
@@ -34,17 +42,95 @@ public class CombatController : MonoBehaviour {
 	void Start() {
 		baseColor = spriteRenderer.color;
 
+		canBlock = true;
+
+		blockingTime = maxBlockingTime;
+
 		SetBlocking(false);
 	}
 
+	void Update() {
+		HandleBlockingTime ();
+
+		Debug.Log (blockingTime);
+	}
+
 	public void SetBlocking(bool value) {
-		isBlocking = value;
-		if (value) {
-			spriteRenderer.color = Color.black;
+		if (!canBlock) {
+			Debug.Log ("Can't block");
+			return;
 		} 
 		else {
-			spriteRenderer.color = baseColor;
+			if (value) {
+				Debug.Log ("Blocking");
+			} 
+			else {
+				Debug.Log ("Not Blocking");
+			}
 		}
+
+		isBlocking = value;
+		if (value == false) {
+			spriteRenderer.color = baseColor;
+			blockingDelay = maxBlockingDelay;
+		}
+	}
+
+	void HandleBlockingTime() {
+		// if blocking
+		if (isBlocking) {
+
+			// blocking time -= delta
+			blockingTime -= Time.deltaTime;
+
+			// If blocking time =< 0
+			if (blockingTime <= 0) {
+
+				// set blocking time = 0
+				blockingTime = 0;
+
+				// apply penalty time
+				StartCoroutine (ResetBlocking (blockingPenalty));
+
+				// Set to be not blocking
+				SetBlocking (false);
+
+				// disable blocking
+				canBlock = false;
+				Debug.Log ("Diabling blocking");
+
+			}
+
+			spriteRenderer.color = Color.Lerp(baseColor, Color.black, (blockingTime/maxBlockingTime));
+		}
+
+		// else
+		else if (!isBlocking && canBlock) {
+
+			// decrement time
+			blockingDelay -= Time.deltaTime;
+
+			// If time since stopped blocking if greater than delay
+			if (blockingDelay <= 0) {
+
+				// increate blocking time by rate
+				blockingTime += Time.deltaTime * blockingRefreshRate;
+
+				// Cap blocking time
+				if (blockingTime > maxBlockingTime) {
+					blockingTime = maxBlockingTime;
+				}
+			}
+		}
+	}
+
+	IEnumerator ResetBlocking(float time) {
+		yield return new WaitForSeconds (time);
+
+		blockingTime = maxBlockingTime;
+		blockingDelay = maxBlockingDelay;
+		canBlock = true;
+		Debug.Log ("Enabling blocking");
 	}
 
 	public void Attack() {
