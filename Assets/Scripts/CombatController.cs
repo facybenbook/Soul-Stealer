@@ -15,6 +15,8 @@ public class CombatController : MonoBehaviour {
 
 	public int strength;
 
+	public float knockbackForce;
+
 	[SerializeField]
 	Color baseColor;
 
@@ -59,12 +61,14 @@ public class CombatController : MonoBehaviour {
 			CombatController otherCharacterCombatController = characterHit.collider.gameObject.GetComponent<CombatController>();
 
 			if (otherCharacterCombatController != null) {
-				otherCharacterCombatController.TakeDamage(strength);
+				otherCharacterCombatController.TakeAttack(strength, transform.position);
 			}
 		}
 	}
 
-	public void TakeDamage(int damage) {
+	public void TakeAttack(int damage, Vector3 source) {
+
+		// Hand subtracting health
 		int damageTaken = damage;
 
 		if (isBlocking) {
@@ -72,5 +76,20 @@ public class CombatController : MonoBehaviour {
 		}
 
 		healthController.TakeDamage(damageTaken);
+
+		// Handle Knockback
+		if (damageTaken > 0) {
+			float knockbackXDirection = 0;
+			if (source.x < transform.position.x) {
+				knockbackXDirection = 1;
+			} 
+			else if (source.x > transform.position.x) {
+				knockbackXDirection = -1;
+			}
+			Debug.Log ("direction: " + knockbackXDirection);
+			Vector3 knockback = new Vector3 (knockbackXDirection * knockbackForce * Mathf.Cos (30*Mathf.Deg2Rad), knockbackForce * Mathf.Sin (30*Mathf.Deg2Rad));
+
+			movementController.Knockback (knockback);
+		}
 	}
 }

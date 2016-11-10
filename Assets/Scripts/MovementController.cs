@@ -22,6 +22,7 @@ public class MovementController : MonoBehaviour {
 
 	bool onFloor;
 	bool performedDoubleJump;
+	bool movementDisabled;
 
 	// Sprite Rendering
 
@@ -36,7 +37,7 @@ public class MovementController : MonoBehaviour {
 	}
 
 	void Start() {
-		onFloor = 
+		movementDisabled = false;
 
 		facingRight = true;
 
@@ -54,6 +55,10 @@ public class MovementController : MonoBehaviour {
 	}
 
 	public void Move(Direction direction) {
+		if (movementDisabled) {
+			return;
+		}
+
 		switch (direction) {
 			case Direction.Left:
 				rb2d.velocity = new Vector2(-moveVelocity, rb2d.velocity.y);
@@ -108,5 +113,18 @@ public class MovementController : MonoBehaviour {
 	void FlipSprite() {
 		spriteRenderer.flipX = !spriteRenderer.flipX;
 		facingRight = !facingRight;
+	}
+
+	public void Knockback(Vector3 force) {
+		movementDisabled = true;
+		StartCoroutine (EnableMovement (1));
+
+		Debug.Log (force);
+		rb2d.AddForce (force);
+	}
+
+	IEnumerator EnableMovement(float time) {
+		yield return new WaitForSeconds (time);
+		movementDisabled = false;
 	}
 }
