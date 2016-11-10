@@ -15,6 +15,9 @@ public class CombatController : MonoBehaviour {
 
 	public int strength;
 
+	[SerializeField]
+	Color baseColor;
+
 	bool isBlocking;
 	public bool GetIsBlocking() {
 		return isBlocking;
@@ -27,11 +30,19 @@ public class CombatController : MonoBehaviour {
 	}
 
 	void Start() {
+		baseColor = spriteRenderer.color;
+
 		SetBlocking(false);
 	}
 
 	public void SetBlocking(bool value) {
 		isBlocking = value;
+		if (value) {
+			spriteRenderer.color = Color.black;
+		} 
+		else {
+			spriteRenderer.color = baseColor;
+		}
 	}
 
 	public void Attack() {
