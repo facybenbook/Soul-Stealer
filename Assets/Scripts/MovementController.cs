@@ -8,6 +8,8 @@ public class MovementController : MonoBehaviour {
 	Rigidbody2D rb2d;
 	SpriteRenderer spriteRenderer;
 
+	HealthController healthController;
+
 	// Layers
 
 	[SerializeField]
@@ -34,6 +36,8 @@ public class MovementController : MonoBehaviour {
 	void Awake() {
 		rb2d = GetComponent<Rigidbody2D>();
 		spriteRenderer = GetComponent<SpriteRenderer>();
+
+		healthController = GetComponent<HealthController> ();
 	}
 
 	void Start() {
@@ -55,6 +59,12 @@ public class MovementController : MonoBehaviour {
 	}
 
 	public void Move(Direction direction) {
+		if (healthController != null) {
+			if (healthController.GetHealth () <= 0) {
+				return;
+			}
+		}
+
 		if (movementDisabled) {
 			return;
 		}
@@ -84,6 +94,12 @@ public class MovementController : MonoBehaviour {
 	}
 
 	public void Jump() {
+		if (healthController != null) {
+			if (healthController.GetHealth () <= 0) {
+				return;
+			}
+		}
+
 		if (onFloor) {
 			rb2d.velocity = new Vector2(rb2d.velocity.x, jumpVelocity);
 		}

@@ -5,8 +5,6 @@ public class SimpleAI : MonoBehaviour {
 
 	public Transform target;
 
-	HealthController healthController;
-
 	MovementController movementController;
 
 	CombatController combatController;
@@ -20,7 +18,6 @@ public class SimpleAI : MonoBehaviour {
 	bool canAttack;
 
 	void Awake() {
-		healthController = GetComponent<HealthController> ();
 		movementController = GetComponent<MovementController> ();
 		combatController = GetComponent<CombatController> ();
 	}
@@ -30,10 +27,6 @@ public class SimpleAI : MonoBehaviour {
 	}
 
 	void Update() {
-		if (healthController.GetHealth () <= 0) {
-			return;
-		}
-
 		MoveTowardsTarget ();
 
 		FaceTarget ();

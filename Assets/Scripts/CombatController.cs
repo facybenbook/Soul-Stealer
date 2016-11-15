@@ -15,6 +15,8 @@ public class CombatController : MonoBehaviour {
 	[SerializeField]
 	LayerMask attackableLayerMask;
 
+	public GameObject blockCircle;
+
 	public int strength;
 
 	bool canBlock;
@@ -30,7 +32,7 @@ public class CombatController : MonoBehaviour {
 	int strengthMultiplier;
 
 	[SerializeField]
-	Color baseColor;
+	// Color baseColor;
 
 	bool isBlocking;
 	public bool GetIsBlocking() {
@@ -45,7 +47,7 @@ public class CombatController : MonoBehaviour {
 	}
 
 	void Start() {
-		baseColor = spriteRenderer.color;
+		// baseColor = spriteRenderer.color;
 
 		canBlock = true;
 
@@ -54,6 +56,14 @@ public class CombatController : MonoBehaviour {
 		blockingTime = maxBlockingTime;
 
 		SetBlocking(false);
+
+		healthController.OnCharacterDeath += HealthController_OnCharacterDeath;
+	}
+
+	void HealthController_OnCharacterDeath ()
+	{
+		SetBlocking (false);
+		canBlock = false;
 	}
 
 	void Update() {
@@ -63,6 +73,7 @@ public class CombatController : MonoBehaviour {
 	}
 
 	public void SetBlocking(bool value) {
+
 		if (!canBlock) {
 			Debug.Log ("Can't block");
 			return;
@@ -78,8 +89,12 @@ public class CombatController : MonoBehaviour {
 
 		isBlocking = value;
 		if (value == false) {
-			spriteRenderer.color = baseColor;
+			// spriteRenderer.color = baseColor;
+			blockCircle.SetActive (false);
 			blockingDelay = maxBlockingDelay;
+		} 
+		else {
+			blockCircle.SetActive(true);
 		}
 	}
 
@@ -108,7 +123,9 @@ public class CombatController : MonoBehaviour {
 
 			}
 
-			spriteRenderer.color = Color.Lerp(baseColor, Color.black, (blockingTime/maxBlockingTime));
+			float blockingTimeAsPercent = blockingTime / maxBlockingTime;
+			blockCircle.transform.localScale = new Vector3 (blockingTimeAsPercent, blockingTimeAsPercent, 1); 
+			// spriteRenderer.color = Color.Lerp(baseColor, Color.black, (blockingTime/maxBlockingTime));
 		}
 
 		// else
@@ -141,6 +158,10 @@ public class CombatController : MonoBehaviour {
 	}
 
 	public void Attack() {
+		if (healthController.GetHealth () <= 0) {
+			return;
+		}
+
 		// Perform Raycast
 		Vector3 facingDir = movementController.IsFacingRight() ? Vector3.right : Vector3.left;
 		Vector3 raycastStart = transform.position + (facingDir * (((spriteRenderer.bounds.size.x/2) + 0.1f)));
