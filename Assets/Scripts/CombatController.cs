@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(MovementController))]
 [RequireComponent(typeof(HealthController))]
@@ -9,6 +10,7 @@ public class CombatController : MonoBehaviour {
 	SpriteRenderer spriteRenderer;
 	MovementController movementController;
 	HealthController healthController;
+	Animator animator;
 
 	[SerializeField]
 	LayerMask attackableLayerMask;
@@ -37,6 +39,7 @@ public class CombatController : MonoBehaviour {
 		spriteRenderer = GetComponent<SpriteRenderer>();
 		movementController = GetComponent<MovementController>();
 		healthController = GetComponent<HealthController>();
+		animator = GetComponent<Animator> ();
 	}
 
 	void Start() {
@@ -134,12 +137,15 @@ public class CombatController : MonoBehaviour {
 	}
 
 	public void Attack() {
-		// Perform animation
+		// Perform Raycast
 		Vector3 facingDir = movementController.IsFacingRight() ? Vector3.right : Vector3.left;
 		Vector3 raycastStart = transform.position + (facingDir * (((spriteRenderer.bounds.size.x/2) + 0.1f)));
 
 		Debug.DrawLine(raycastStart, (raycastStart + (facingDir * 0.5f)), Color.red, 0.5f, false);
 		// Debug.DrawLine(transform.position, (transform.position + (facingDir * ((spriteRenderer.bounds.size.x/2)+0.5f))), Color.red, 0.5f, false);
+
+		// Trigger Animation
+		animator.SetTrigger("Punch");
 
 		RaycastHit2D characterHit = Physics2D.Raycast(raycastStart, facingDir, 0.5f, attackableLayerMask);
 		// RaycastHit2D characterHit = Physics2D.Raycast(transform.position, facingDir, (spriteRenderer.bounds.size.y/2)+0.5f, attackableLayerMask);
