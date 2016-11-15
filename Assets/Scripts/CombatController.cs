@@ -52,7 +52,7 @@ public class CombatController : MonoBehaviour {
 	void Update() {
 		HandleBlockingTime ();
 
-		Debug.Log (blockingTime);
+		// Debug.Log (blockingTime);
 	}
 
 	public void SetBlocking(bool value) {
@@ -154,6 +154,10 @@ public class CombatController : MonoBehaviour {
 
 	public void TakeAttack(int damage, Vector3 source) {
 
+		if (healthController.GetHealth () <= 0) {
+			return;
+		}
+
 		// Hand subtracting health
 		int damageTaken = damage;
 
@@ -172,7 +176,7 @@ public class CombatController : MonoBehaviour {
 			else if (source.x > transform.position.x) {
 				knockbackXDirection = -1;
 			}
-			Debug.Log ("direction: " + knockbackXDirection);
+			// Debug.Log ("direction: " + knockbackXDirection);
 			Vector3 knockback = new Vector3 (knockbackXDirection * knockbackForce * Mathf.Cos (30*Mathf.Deg2Rad), knockbackForce * Mathf.Sin (30*Mathf.Deg2Rad));
 
 			movementController.Knockback (knockback);

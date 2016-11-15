@@ -93,7 +93,7 @@ public class MovementController : MonoBehaviour {
 		}
 	}
 
-	void SetSpriteDirection(Direction direction) {
+	public void SetSpriteDirection(Direction direction) {
 		switch (direction) {
 			case Direction.Left:
 				if (facingRight) {
@@ -119,7 +119,7 @@ public class MovementController : MonoBehaviour {
 		movementDisabled = true;
 		StartCoroutine (EnableMovement (1));
 
-		Debug.Log (force);
+		// Debug.Log (force);
 		rb2d.AddForce (force);
 	}
 
