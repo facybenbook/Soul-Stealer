@@ -27,6 +27,8 @@ public class CombatController : MonoBehaviour {
 
 	public float knockbackForce;
 
+	int strengthMultiplier;
+
 	[SerializeField]
 	Color baseColor;
 
@@ -46,6 +48,8 @@ public class CombatController : MonoBehaviour {
 		baseColor = spriteRenderer.color;
 
 		canBlock = true;
+
+		strengthMultiplier = 1;
 
 		blockingTime = maxBlockingTime;
 
@@ -153,9 +157,11 @@ public class CombatController : MonoBehaviour {
 			CombatController otherCharacterCombatController = characterHit.collider.gameObject.GetComponent<CombatController>();
 
 			if (otherCharacterCombatController != null) {
-				otherCharacterCombatController.TakeAttack(strength, transform.position);
+				otherCharacterCombatController.TakeAttack(strength*strengthMultiplier, transform.position);
 			}
 		}
+
+		strengthMultiplier = 1;
 	}
 
 	public void TakeAttack(int damage, Vector3 source) {
@@ -169,6 +175,7 @@ public class CombatController : MonoBehaviour {
 
 		if (isBlocking) {
 			damageTaken = 0;
+			strengthMultiplier++;
 		}
 
 		healthController.TakeDamage(damageTaken);
