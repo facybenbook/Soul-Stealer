@@ -5,6 +5,8 @@ public class HealthController : MonoBehaviour {
 
 	public int maxHealth;
 
+	public HealthBarController healthBarController;
+
 	int health;
 	public int GetHealth() {
 		return health;
@@ -15,6 +17,8 @@ public class HealthController : MonoBehaviour {
 
 	void Start() {
 		health = maxHealth;
+
+		UpdateHealthBar ();
 	}
 
 	public void TakeDamage(int damage) {
@@ -24,7 +28,7 @@ public class HealthController : MonoBehaviour {
 			health = 0;
 		}
 
-		Debug.Log(gameObject.name + "'s health: " + health);
+		UpdateHealthBar ();
 
 		if (health == 0) {
 			if(OnCharacterDeath != null) {
@@ -40,6 +44,11 @@ public class HealthController : MonoBehaviour {
 			health = maxHealth;
 		}
 
-		Debug.Log(gameObject.name + "'s health: " + health);
+		UpdateHealthBar ();
+	}
+
+	void UpdateHealthBar() {
+		float percentOfHealth = (float) health / maxHealth;
+		healthBarController.setHealthBar (percentOfHealth);
 	}
 }

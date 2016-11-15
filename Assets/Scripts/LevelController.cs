@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LevelController : MonoBehaviour {
 
@@ -46,6 +47,10 @@ public class LevelController : MonoBehaviour {
 				pauseScreen.gameObject.SetActive(true);
 			}
 		}
+
+		if (Input.GetKeyDown (KeyCode.R)) {
+			RestartLevel ();
+		}
 	}
 
 	void MakeSureEventSystemIsPresent() {
@@ -55,5 +60,9 @@ public class LevelController : MonoBehaviour {
 		} else {
 			Debug.Log ("Event System Present");
 		}
+	}
+
+	void RestartLevel() {
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().name);
 	}
 }
